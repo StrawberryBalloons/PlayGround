@@ -9,6 +9,11 @@ public class Direction : MonoBehaviour
     Rigidbody myRigidbody;
     GameObject player;
     Transform cam;
+    public Transform target;
+    public float speed = 1;
+    bool trig = false;
+    Ray ray;
+    RaycastHit hitInfo;
     void Start()
     {
         myRigidbody = GetComponent<Rigidbody>();
@@ -22,7 +27,7 @@ public class Direction : MonoBehaviour
             switch (select)
             {
                 case 4://Track
-                    setRotation(trackPoint());
+                    trackPoint();
                     break;
                 case 3://point
                     setRotation(getPointRot());
@@ -34,6 +39,7 @@ public class Direction : MonoBehaviour
                     select = -1; ;
                     break;
                 case 1://target nearest enemy rotation
+                    Debug.Log("not implemented");
                     //setRotation(getTargetNearEnemyRot());
                     select = -1;
                     break;
@@ -42,9 +48,39 @@ public class Direction : MonoBehaviour
             }
         }
     }
-    public Vector3 trackPoint()
+    public void trackPoint()
     {
-        return new Vector3();
+        if (!trig)
+        {
+            ray = new Ray(transform.position, transform.forward);
+
+            if (Physics.Raycast(ray, out hitInfo, 10))//replace 10 with mana
+            {
+                target = hitInfo.transform;
+                trig = true;
+            }
+            else
+            {
+                select = -1;
+            }
+        }
+        else
+        {
+            target = hitInfo.transform;
+        }
+
+        // Determine which direction to rotate towards
+        Vector3 targetDirection = target.position - transform.position;
+
+        // The step size is equal to speed times frame time.
+        float singleStep = speed * Time.deltaTime;
+        Vector3 newDirection = Vector3.RotateTowards(transform.forward, targetDirection, singleStep, 0.0f);
+
+        // Draw a ray pointing at our target in
+        Debug.DrawRay(transform.position, newDirection, Color.red);
+
+        // Calculate a rotation a step closer to the target and applies rotation to this object
+        transform.rotation = Quaternion.LookRotation(newDirection);
     }
     public Vector3 getTargetNearestEnemyRot()
     {
@@ -68,7 +104,8 @@ public class Direction : MonoBehaviour
         player = obj;
         getCamera();
     }
-    public void getCamera(){
+    public void getCamera()
+    {
         cam = player.transform.Find("playerCamera");
     }
     public void setSelect(int number)

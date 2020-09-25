@@ -182,7 +182,7 @@ public class RuneManager : MonoBehaviour
     public void addSpeed(GameObject spell, float select)
     {
         spell.AddComponent<Speed>();
-        spell.GetComponent<Speed>().setSpeed(select);
+        spell.GetComponent<Speed>().setSpeed(select * player.GetComponent<PlayerController>().mana);
     }
     public void addDirection(GameObject spell, int select)
     {

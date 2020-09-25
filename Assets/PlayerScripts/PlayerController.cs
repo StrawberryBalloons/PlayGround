@@ -20,7 +20,7 @@ public class PlayerController : MonoBehaviour
     //public float strength; //not sure
     //public float vitality; // always 10
     //public float endurance; //how long can click buttons without slowing down
-    //public float Mana; //quick maths?
+    public float mana; //quick maths?
     //public Vector3 velocity;
     //public float mouseSensitivity;
 
@@ -53,7 +53,7 @@ public class PlayerController : MonoBehaviour
 
         controller.Move(move * speed * Time.deltaTime);
 
-        if(Input.GetButtonDown("Jump") && isGrounded)
+        if((Input.GetButtonDown("Jump") || Input.inputString == " ") && isGrounded)
         {
             velocity.y = Mathf.Sqrt(jumpHeight * -2f * gravity);
         }
